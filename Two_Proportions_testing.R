@@ -18,6 +18,14 @@ gen_contigTab_pval <-
         (non_res_1 - E3) ^ 2 / E3 + (non_res_2 - E4) ^ 2 / E4
       
       pval = 1 - pchisq(chisq_, 1)
+      
+      #testing using function in R-chisq; confirmed
+      data <- matrix(c(x1, n1-x1, x2, n2-x2), ncol=2, byrow = TRUE)
+      data <-as.table(data)
+      # by default, chisq.test() will do continuity correction.
+      # correction will be more conservative: larger pval with fewer rejections
+      pval_ = chisq.test(data, correct = F)$p.value
+      
       # #simplified formula (identical to chisq_)
       # chisq_2 = 2 * (x1^2 + x2^2)/(x1+x2) +
       #   2 * (non_res_1^2 + non_res_2^2)/(non_res_1 + non_res_2) - (n1+n2)
@@ -56,8 +64,11 @@ one_sim_contigTab <-
     n3 = n - n1 - n2
     
     x1 = rbinom(1, n1, p1)
+    # print(c("x1",x1))
     x2 = rbinom(1, n2, p2)
+    # print(c("x2",x2))
     x3 = rbinom(1, n3, p3)
+    # print(c("x3",x3))
     
 
     #compare arm1 and arm3
@@ -109,7 +120,7 @@ p2 = 0.5
 p3 = 0.5
 n_sim = 10000
 n = 120
-test.type = 'two_sample_prop'
+test.type = 'chisq'
 
 run_simulation(n_sim, n, p1, p2, p3, alpha, test.type)
 
@@ -120,6 +131,6 @@ p2 = 0.6
 p3 = 0.5
 n_sim = 10000
 n = 120
-test.type = 'two_sample_prop'
+test.type = 'chisq'
 
 run_simulation(n_sim, n, p1, p2, p3, alpha, test.type)
